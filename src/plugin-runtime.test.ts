@@ -88,7 +88,7 @@ describe("createPluginRuntime", () => {
     const appsFile = join(dir, "apps.json");
     // `twin` resolves to the same directory as `demo`: a plugin acting per home must act once.
     writeFileSync(appsFile, JSON.stringify({
-      demo: { id: "demo", label: "Demo", home: { candidates: [dir] }, loader: { id: "demo-loader", url: "https://github.com/intisy-ai/demo-loader" } },
+      demo: { id: "demo", label: "Demo", home: { candidates: [dir] }, loader: { id: "demo-loader", url: "https://github.com/forebay/demo-loader" } },
       twin: { id: "twin", label: "Twin", home: { candidates: [dir] } },
       gone: { id: "gone", label: "Gone", home: { candidates: [absent] } },
     }));

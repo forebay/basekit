@@ -37,7 +37,7 @@ function zeta(overrides = {}) {
   return {
     id: "zeta", label: "Zeta", home: { candidates: [dir] },
     detect: { binary: "zeta", pkg: "zeta-cli" },
-    loader: { id: "zeta-loader", url: "intisy-ai/zeta-loader" },
+    loader: { id: "zeta-loader", url: "forebay/zeta-loader" },
     accent: "#5f875f",
     wrapperCommand: "zc",
     npmPlugins: { configFiles: ["zeta.json"], pluginsKey: "plugin", packageCache: join(dir, "pkgcache") },

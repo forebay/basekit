@@ -232,7 +232,7 @@ export function fetchSeedMarketplacesAsync() {
     }
     var url = "https://raw.githubusercontent.com/" + seed.repo + "/" + branches[idx] + "/" + MARKETPLACE_MANIFEST_PATH;
     S.catalogPending++;
-    exec(curlCmd + ' -sL -H "User-Agent: intisy-ai-loader" "' + url + '"', { timeout: 15000 }, function(err, stdout) {
+    exec(curlCmd + ' -sL -H "User-Agent: forebay-loader" "' + url + '"', { timeout: 15000 }, function(err, stdout) {
       S.catalogPending = Math.max(0, S.catalogPending - 1);
       if (!err && stdout) {
         try {
@@ -366,7 +366,7 @@ export function fetchCatalogsAsync() {
     for (var entry of missing) {
       (function(target) {
         S.catalogPending++;
-        exec(curlCmd + ' -sL -H "User-Agent: intisy-ai-loader" "https://api.github.com/repos/' + target.full_name + '"', function(err, stdout) {
+        exec(curlCmd + ' -sL -H "User-Agent: forebay-loader" "https://api.github.com/repos/' + target.full_name + '"', function(err, stdout) {
           if (!err && stdout) {
             try {
               var repo = JSON.parse(stdout);
@@ -432,7 +432,7 @@ export function fetchCatalogsAsync() {
     }
     function fetchRepoStars(fullName: string): void {
       S.catalogPending++;
-      exec(curlCmd + ' -sL -H "User-Agent: intisy-ai-loader" "https://api.github.com/repos/' + fullName + '"', function(err, stdout) {
+      exec(curlCmd + ' -sL -H "User-Agent: forebay-loader" "https://api.github.com/repos/' + fullName + '"', function(err, stdout) {
         if (!err && stdout) {
           try {
             var repo = JSON.parse(stdout);
@@ -463,7 +463,7 @@ export function fetchCatalogsAsync() {
         var pkg = npmPkgFromArgs(target.args);
         if (!pkg) return;
         S.catalogPending++;
-        exec(curlCmd + ' -sL -H "User-Agent: intisy-ai-loader" "https://registry.npmjs.org/' + pkg + '"', function(err, stdout) {
+        exec(curlCmd + ' -sL -H "User-Agent: forebay-loader" "https://registry.npmjs.org/' + pkg + '"', function(err, stdout) {
           fetchDone();
           if (err || !stdout) return;
           try {
@@ -485,7 +485,7 @@ export function fetchCatalogsAsync() {
 
   function searchGH(query: string, catalog: MarketplaceRow[] | McpCatalogEntry[], pageNum: number): void {
     S.catalogPending++;
-    exec(curlCmd + ' -s -H "User-Agent: intisy-ai-loader" "https://api.github.com/search/repositories?q=' + query + '&sort=stars&order=desc&per_page=100&page=' + pageNum + '"', function(err, stdout) {
+    exec(curlCmd + ' -s -H "User-Agent: forebay-loader" "https://api.github.com/search/repositories?q=' + query + '&sort=stars&order=desc&per_page=100&page=' + pageNum + '"', function(err, stdout) {
       fetchDone();
       if (!err && stdout) {
         try {
@@ -598,7 +598,7 @@ export function fetchCatalogsAsync() {
 
   function searchPopular(query: string, pageNum: number): void {
     S.catalogPending++;
-    exec(curlCmd + ' -s -H "User-Agent: intisy-ai-loader" "https://api.github.com/search/repositories?q=' + query + '&sort=stars&order=desc&per_page=100&page=' + pageNum + '"', function(err, stdout) {
+    exec(curlCmd + ' -s -H "User-Agent: forebay-loader" "https://api.github.com/search/repositories?q=' + query + '&sort=stars&order=desc&per_page=100&page=' + pageNum + '"', function(err, stdout) {
       fetchDone();
       if (err || !stdout) return;
       try {

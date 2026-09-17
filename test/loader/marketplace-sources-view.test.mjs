@@ -70,14 +70,14 @@ const { buildMarketplaceMarketsList } = require("../../dist/loader/marketplace.j
 
 describe("Level 1", () => {
   it("names the declared sources, keeps community and Featured, and names no org itself", () => {
-    S.sourceCatalog = [entry("one", "intisy-ai", ["provider"])];
+    S.sourceCatalog = [entry("one", "forebay", ["provider"])];
     S.inputBuf = "";
     S.capabilities = {};
     const rows = buildMarketplaceMarketsList();
     const names = rows.filter((row) => !row.isAction).map((row) => row.name);
     assert.ok(names.includes("community"), names.join(","));
     assert.ok(names.includes("Featured"), names.join(","));
-    assert.ok(!names.includes("intisy-ai (official)"), names.join(","));
+    assert.ok(!names.includes("forebay (official)"), names.join(","));
     const sourceRow = rows.find((row) => row.builtin === "source");
     assert.ok(sourceRow, "a declared source must have a row: " + names.join(","));
     assert.equal(typeof sourceRow.sourceId, "string");

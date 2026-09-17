@@ -35,7 +35,7 @@ export interface MarketplaceSource {
  * plugin's name would not be: it says where to look, never what to find. A home overrides it by
  * declaring its own sources.
  */
-export const DEFAULT_MARKETPLACE_ORG = "intisy-ai";
+export const DEFAULT_MARKETPLACE_ORG = "forebay";
 
 const CONFIG_FILE = "marketplaces.json";
 
