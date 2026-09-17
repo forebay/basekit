@@ -51,12 +51,12 @@ function writeRegistry(descriptor) {
   writeFileSync(join(dir, "apps.json"), JSON.stringify({ zeta: descriptor }));
 }
 
-// The installed zeta-loader clone whose cairn.json carries the same app descriptor: the settings
+// The installed zeta-loader clone whose plugin.json carries the same app descriptor: the settings
 // case (config.loaderConfigName()) is discovered through this clone, not through the registry alone.
 function installZetaLoaderClone(descriptor) {
   const cloneDir = join(dir, "repos", "zeta-loader");
   mkdirSync(cloneDir, { recursive: true });
-  writeFileSync(join(cloneDir, "cairn.json"), JSON.stringify({ app: descriptor }));
+  writeFileSync(join(cloneDir, "plugin.json"), JSON.stringify({ app: descriptor }));
 }
 
 beforeEach(() => {

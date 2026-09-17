@@ -110,7 +110,7 @@ function retryBackoffSchema(keys: RetryBackoffKeys): ProviderSettingsSchema {
   ];
 }
 
-/** Capabilities fields (Cairn dashboard) for a provider's retry/backoff pair, keyed by its own field names. */
+/** Capabilities fields (for a dashboard) for a provider's retry/backoff pair, keyed by its own field names. */
 export function retryBackoffCapabilities(keys: RetryBackoffKeys) {
   return toCapabilitiesFields(retryBackoffSchema(keys));
 }

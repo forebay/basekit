@@ -3,7 +3,7 @@
 // file under it, so a file that reaches a logger, a config read or a plugin scan without pinning
 // first reads and writes the developer's real app home. Setup files run before a test file is
 // loaded, so a file needing its own home still overrides this. A module reaching the app registry
-// without the HUB_APPS_FILE pin below reads the developer's real ~/.config/cairn/apps.json.
+// without the HUB_APPS_FILE pin below reads the developer's real app registry.
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

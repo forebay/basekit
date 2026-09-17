@@ -49,7 +49,7 @@ export interface SettingsGroupSchema {
 
 /**
  * A provider's settings, declared once and derived into both consumer shapes:
- * {@link toSettingsGroups} for the loader TUI, {@link toCapabilitiesFields} for the Cairn
+ * {@link toSettingsGroups} for the loader TUI, {@link toCapabilitiesFields} for a
  * dashboard. Declaring the schema once keeps the two surfaces from drifting out of key-set sync.
  */
 export type ProviderSettingsSchema = SettingsGroupSchema[];
@@ -80,7 +80,7 @@ export interface SettingsMenuGroup {
   fields: SettingsMenuField[];
 }
 
-/** A field in the Cairn dashboard's capabilities list, as produced by {@link toCapabilitiesFields}. */
+/** A field in a dashboard's capabilities list, as produced by {@link toCapabilitiesFields}. */
 export interface CapabilitiesField {
   /** The config key this field reads and writes. */
   key: string;
@@ -149,7 +149,7 @@ export function toSettingsGroups(schema: ProviderSettingsSchema): SettingsMenuGr
   }));
 }
 
-/** Derives the Cairn dashboard's `defineCapabilities()` fields shape from a provider's schema. */
+/** Derives a dashboard's `defineCapabilities()` fields shape from a provider's schema. */
 export function toCapabilitiesFields(schema: ProviderSettingsSchema): CapabilitiesField[] {
   const fields: CapabilitiesField[] = [];
   for (const group of schema) {

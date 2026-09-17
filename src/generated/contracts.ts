@@ -340,7 +340,7 @@ export interface RoutingService {
  * A home switches each of these on or off independently, which is why a run states
  * which one it is rather than asking for updates unconditionally.
  */
-export type UpdateTrigger = "loader" | "app" | "cairn";
+export type UpdateTrigger = "loader" | "app" | "dashboard";
 
 /**
  * Where a plugin keeps state inside a home, for a surface offering to delete it on uninstall.

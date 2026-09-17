@@ -51,7 +51,7 @@ links a library when the module beside it does.
 
 ## A host installs it and imports it
 
-A loader, `cairn` and `ai-java` are hosts: they run plugins they did not write, and they are the ones
+A loader, `forebay` and `ai-java` are hosts: they run plugins they did not write, and they are the ones
 that supply `ctx` in the first place. A host takes basekit as an ordinary npm dependency at a version
 range and imports what it needs.
 

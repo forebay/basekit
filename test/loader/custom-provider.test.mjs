@@ -2,7 +2,7 @@ import { describe, it } from "vitest";
 import assert from "node:assert";
 import { customProviderState, customProviderLabel, addCustomProviderAction } from "../../dist/loader/custom-provider.js";
 
-const ENGINE = { id: "custom-auth", url: "u", capability: "custom-endpoints", target: "cairn", meta: { configName: "custom-auth" } };
+const ENGINE = { id: "custom-auth", url: "u", capability: "custom-endpoints", target: "forebay", meta: { configName: "custom-auth" } };
 
 // Stands in for the deployed plugin: it owns the rules, so the tests state them once here the
 // way the real plugin does, and assert this library asks rather than deciding.

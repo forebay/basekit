@@ -2,6 +2,7 @@ import { existsSync, statSync } from "fs";
 import { isAbsolute, join } from "path";
 import { homedir } from "os";
 import { readFileSync } from "fs";
+import { resolveExistingAppsFile } from "../apps.js";
 
 /**
  * One app, as the registry declares it.
@@ -24,17 +25,12 @@ function trimmed(value?: string): string {
   return value && value.trim() ? value.trim() : "";
 }
 
-function registryFile(): string {
-  const override = trimmed(process.env.HUB_APPS_FILE);
-  return override || join(homedir(), ".config", "cairn", "apps.json");
-}
-
 let CACHE: AppDescriptor[] | null = null;
 let CACHE_KEY = "";
 
 /** Every app the registry declares, or an empty list when it declares none. */
 export function appDescriptors(): AppDescriptor[] {
-  const file = registryFile();
+  const file = resolveExistingAppsFile();
   let mtime = 0;
   try { mtime = existsSync(file) ? statSync(file).mtimeMs : 0; } catch { mtime = 0; }
   const key = file + "::" + mtime;
