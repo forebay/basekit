@@ -1,5 +1,6 @@
 import { existsSync } from "fs";
 import { join } from "path";
+import { ECOSYSTEM_ORG } from "../ecosystem.js";
 import { readJson } from "./json.js";
 import type { HomePaths } from "./home-paths.js";
 
@@ -35,7 +36,7 @@ export interface MarketplaceSource {
  * plugin's name would not be: it says where to look, never what to find. A home overrides it by
  * declaring its own sources.
  */
-export const DEFAULT_MARKETPLACE_ORG = "intisy-ai";
+export const DEFAULT_MARKETPLACE_ORG = ECOSYSTEM_ORG;
 
 const CONFIG_FILE = "marketplaces.json";
 

@@ -17,7 +17,7 @@ function activitySurfaceFiles(): string[] {
 // Core must never name an app, vendor, or plugin: identity arrives as data from the
 // app registry and as caller-supplied strings. A hit here means the pipeline grew a
 // dependency on something it must stay generic about.
-const FORBIDDEN = ["claude", "opencode", "cairn", "antigravity", "anthropic", "gemini", "openai", "wakatime", "plugin-updater", "sync-bridge", "config-ledger"];
+const FORBIDDEN = ["claude", "opencode", "forebay", "antigravity", "anthropic", "gemini", "openai", "wakatime", "plugin-updater", "sync-bridge", "config-ledger"];
 
 describe("activity surface stays app-agnostic", () => {
   const files = activitySurfaceFiles();

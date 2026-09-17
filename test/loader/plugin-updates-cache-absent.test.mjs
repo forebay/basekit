@@ -13,7 +13,7 @@ process.env.HUB_CONFIG_DIR = configDir;
 
 writeFileSync(
   join(configDir, "config", "plugins.json"),
-  JSON.stringify([{ name: "no-cache-plugin", url: "https://github.com/intisy-ai/no-cache-plugin.git", enabled: true, autoUpdate: true }]),
+  JSON.stringify([{ name: "no-cache-plugin", url: "https://github.com/forebay/no-cache-plugin.git", enabled: true, autoUpdate: true }]),
 );
 // deliberately no cache/plugin-updates.json written
 

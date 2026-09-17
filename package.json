@@ -1,16 +1,16 @@
 {
   "name": "basekit",
-  "version": "5.0.0",
-  "description": "The shared foundation of the intisy-ai AI-proxy ecosystem: config, logging and app detection, canonical IR, provider accounts, the routing engine, and the app-loader engine, as one package with a subpath per module.",
+  "version": "6.0.0",
+  "description": "The shared foundation of the forebay AI-proxy ecosystem: config, logging and app detection, canonical IR, provider accounts, the routing engine, and the app-loader engine, as one package with a subpath per module.",
   "type": "module",
   "license": "MIT",
   "author": "intisy",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/intisy-ai/basekit.git"
+    "url": "git+https://github.com/forebay/basekit.git"
   },
   "keywords": [
-    "intisy-ai",
+    "forebay",
     "ai-proxy",
     "basekit",
     "config",

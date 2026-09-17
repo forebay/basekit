@@ -18,9 +18,9 @@ process.env.HUB_CONFIG_DIR = configDir;
 writeFileSync(
   join(configDir, "config", "plugins.json"),
   JSON.stringify([
-    { name: "behind-plugin", url: "https://github.com/intisy-ai/behind-plugin.git", enabled: true, autoUpdate: true },
-    { name: "current-plugin", url: "https://github.com/intisy-ai/current-plugin.git", enabled: true, autoUpdate: true },
-    { name: "unchecked-plugin", url: "https://github.com/intisy-ai/unchecked-plugin.git", enabled: true, autoUpdate: true },
+    { name: "behind-plugin", url: "https://github.com/forebay/behind-plugin.git", enabled: true, autoUpdate: true },
+    { name: "current-plugin", url: "https://github.com/forebay/current-plugin.git", enabled: true, autoUpdate: true },
+    { name: "unchecked-plugin", url: "https://github.com/forebay/unchecked-plugin.git", enabled: true, autoUpdate: true },
   ]),
 );
 

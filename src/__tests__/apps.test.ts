@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { mkdtempSync, mkdirSync, writeFileSync } from "fs";
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import {
@@ -11,6 +11,7 @@ import {
   currentAppId,
   type AppDescriptor,
 } from "../apps.js";
+import { ECOSYSTEM_ORG } from "../ecosystem.js";
 
 function tempHome(): string {
   return mkdtempSync(join(tmpdir(), "core-apps-"));
@@ -149,9 +150,25 @@ describe("app registry", () => {
     expect(stored?.loader).toEqual(alpha.loader);
   });
 
-  it("resolveAppsFile prefers HUB_APPS_FILE then ~/.config/cairn/apps.json", () => {
+  it("resolveAppsFile prefers HUB_APPS_FILE then the ecosystem dir under ~/.config", () => {
     expect(resolveAppsFile({ HUB_APPS_FILE: "/x/apps.json" }, home)).toBe("/x/apps.json");
-    expect(resolveAppsFile({}, home)).toBe(join(home, ".config", "cairn", "apps.json"));
+    expect(resolveAppsFile({}, home)).toBe(join(home, ".config", ECOSYSTEM_ORG, "apps.json"));
+  });
+
+  // The registry used to sit in a directory named after the dashboard. A read falls back to it so
+  // an upgrade does not present an empty registry, and the next write lands on the canonical path,
+  // which is what carries the entries across for good.
+  it("reads the legacy registry dir when the ecosystem one is absent, then writes the new one", () => {
+    const legacyDir = join(home, ".config", "cairn");
+    mkdirSync(legacyDir, { recursive: true });
+    writeFileSync(join(legacyDir, "apps.json"), JSON.stringify({ alpha }));
+
+    expect(getApp("alpha", {}, home)?.label).toBe(alpha.label);
+
+    registerApp(beta, {}, home);
+    const canonical = join(home, ".config", ECOSYSTEM_ORG, "apps.json");
+    expect(JSON.parse(readFileSync(canonical, "utf8"))).toHaveProperty("alpha");
+    expect(JSON.parse(readFileSync(canonical, "utf8"))).toHaveProperty("beta");
   });
 
   it("currentAppId returns CORE_APP verbatim when set", () => {

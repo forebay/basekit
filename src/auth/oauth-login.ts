@@ -6,7 +6,7 @@
 // account, running the loopback listener, and racing a terminal paste against it.
 //
 // defineOAuthLogin(spec) returns the two entry points a driver exports:
-//   loginFlow() - the split begin/complete form Cairn, the TUI and opencode drive
+//   loginFlow() - the split begin/complete form the dashboard, the TUI and opencode drive
 //   login(opts) - the all-in-one CLI form that opens a browser and waits
 
 import { createInterface } from "node:readline";
@@ -109,7 +109,7 @@ export interface OAuthLoginSpec {
   signInMessage?: string;
 }
 
-/** The split begin/complete handle {@link defineOAuthLogin}'s `loginFlow()` returns, driven by Cairn, the TUI and opencode. */
+/** The split begin/complete handle {@link defineOAuthLogin}'s `loginFlow()` returns, driven by the dashboard, the TUI and opencode. */
 export interface OAuthLoginFlowHandle {
   /** Where to send the user to sign in. */
   url: string;
@@ -132,7 +132,7 @@ export interface OAuthLoginFlowHandle {
  * code.
  */
 export function defineOAuthLogin(spec: OAuthLoginSpec): {
-  /** The split begin/complete form Cairn, the TUI and opencode drive. */
+  /** The split begin/complete form the dashboard, the TUI and opencode drive. */
   loginFlow: () => Promise<OAuthLoginFlowHandle>;
   /** The all-in-one CLI form that opens a browser and waits. */
   login: (opts?: OAuthLoginOpts) => Promise<CoreAccount>;

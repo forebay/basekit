@@ -1,4 +1,4 @@
-// Typed surface for the event bus, so TS consumers (Cairn, plugins) get payload
+// Typed surface for the event bus, so TS consumers (a dashboard, plugins) get payload
 // types per topic. bus.ts implements against these; they are the contract, not a mirror.
 
 import type {

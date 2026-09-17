@@ -7,8 +7,7 @@ import { getApps, getApp as getAppById, resolveHome, currentAppId } from "./apps
 /** An app id, as the registry spells it. */
 export type AppName = string;
 
-/** The GitHub organisation this ecosystem publishes under. */
-export const ECOSYSTEM_ORG = "intisy-ai";
+export { ECOSYSTEM_ORG } from "./ecosystem.js";
 
 /**
  * Which app this process is running under.

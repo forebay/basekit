@@ -1,5 +1,5 @@
 kind: generic
-description: Shared config, canonical-IR, account, routing and loader foundation for the intisy-ai AI-proxy ecosystem.
+description: Shared config, canonical-IR, account, routing and loader foundation for the forebay AI-proxy ecosystem.
 badges:
   - npm-version
   - npm-downloads

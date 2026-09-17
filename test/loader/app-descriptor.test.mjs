@@ -15,7 +15,7 @@ beforeEach(() => {
     zeta: {
       id: "zeta", label: "Zeta", home: { candidates: [dir] },
       detect: { binary: "zeta", pkg: "zeta-cli" },
-      loader: { id: "zeta-loader", url: "intisy-ai/zeta-loader" },
+      loader: { id: "zeta-loader", url: "forebay/zeta-loader" },
       accent: "#123456",
     },
   }));

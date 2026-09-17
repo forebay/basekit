@@ -10,7 +10,7 @@ export function pluginRow(overrides: Partial<PluginRow> = {}): PluginRow {
   return {
     name: "demo",
     folderName: "demo",
-    url: "https://github.com/intisy-ai/demo",
+    url: "https://github.com/forebay/demo",
     autoUpdate: false,
     enabled: true,
     installed: true,

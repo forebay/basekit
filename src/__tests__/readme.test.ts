@@ -21,7 +21,7 @@ function ctxFixture(overrides = {}) {
   return {
     pluginName: "demo",
     pkg: { name: "demo", description: "A demo.", license: "MIT", dependencies: { left: "^1.0.0" },
-           repository: { url: "git+https://github.com/intisy-ai/demo.git" } },
+           repository: { url: "git+https://github.com/forebay/demo.git" } },
     spec: { architecture: "flowchart TD\n  A --> B", structure: { src: ["index.ts - entry"], dist: ["index.js"] },
             commands: [{ name: "demo-config", description: "edit config", argumentHint: "list | set" }] },
     config: { defaults: { logging: true, port: 3456 } },
@@ -54,7 +54,7 @@ describe("runReadmeCli", () => {
   it("writes README.md then --check passes; a mutated file fails", () => {
     const dir = mkdtempSync(pj(tmpdir(), "readme-cli-"));
     writeFileSync(pj(dir, "package.json"), JSON.stringify({ name: "cli-demo", description: "d", license: "MIT",
-      repository: { url: "git+https://github.com/intisy-ai/cli-demo.git" } }));
+      repository: { url: "git+https://github.com/forebay/cli-demo.git" } }));
     defineConfig("cli-demo", { logging: true });
     defineReadme({ description: "d" });
     runReadmeCli("cli-demo", [], dir);                    // writes

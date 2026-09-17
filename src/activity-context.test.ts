@@ -301,8 +301,8 @@ describe("the app a stated home belongs to", () => {
 
   it("keeps an explicitly stated app over what the home would imply", () => {
     resetActivityContext();
-    setActivityContext({ app: "cairn", home: mkdtempSync(join(tmpdir(), "unregistered-")) });
-    expect(buildOrigin().app).toBe("cairn");
+    setActivityContext({ app: "forebay", home: mkdtempSync(join(tmpdir(), "unregistered-")) });
+    expect(buildOrigin().app).toBe("forebay");
     resetActivityContext();
   });
 });

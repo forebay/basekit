@@ -50,7 +50,7 @@ describe("global settings", () => {
 
   it("names no app, plugin, or vendor", () => {
     const text = JSON.stringify(globalSettingsSchema()).toLowerCase();
-    for (const word of ["claude", "opencode", "cairn", "anthropic", "gemini", "antigravity", "wakatime"]) {
+    for (const word of ["claude", "opencode", "forebay", "anthropic", "gemini", "antigravity", "wakatime"]) {
       expect(text).not.toContain(word);
     }
   });

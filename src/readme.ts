@@ -131,7 +131,7 @@ export interface SectionRenderer {
 function repoSlug(pkg: Record<string, any>): string {
   const url = String((pkg.repository && (pkg.repository.url || pkg.repository)) || "");
   const m = url.match(/github\.com[/:]([^/]+)\/([^/.]+)/);
-  return m ? m[1] + "/" + m[2] : "intisy-ai/" + (pkg.name || "");
+  return m ? m[1] + "/" + m[2] : "forebay/" + (pkg.name || "");
 }
 
 const helpers = {

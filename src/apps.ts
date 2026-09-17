@@ -2,6 +2,7 @@ import { existsSync, statSync } from "fs";
 import { isAbsolute, join } from "path";
 import { homedir } from "os";
 import type { AppDescriptor, AppPathNames } from "@intisy/bayonet";
+import { ECOSYSTEM_ORG } from "./ecosystem.js";
 import { atomicWrite, readJson } from "./files.js";
 
 export type { AppDescriptor, AppPathNames };
@@ -59,7 +60,26 @@ export function expandPath(value: string, home: string, appHome: string): string
 export function resolveAppsFile(env: NodeJS.ProcessEnv = process.env, home: string = homedir()): string {
   const override = trimmed(env.HUB_APPS_FILE);
   if (override) return override;
-  return join(home, ".config", "cairn", "apps.json");
+  return join(home, ".config", ECOSYSTEM_ORG, "apps.json");
+}
+
+// The directory the registry lived in while it was named after the dashboard rather than the
+// ecosystem. A read falls back to it and a write never does, so the first write after the rename
+// carries the whole registry across.
+const LEGACY_APPS_DIR = "cairn";
+
+/**
+ * The registry file to READ, which is the canonical one unless only the legacy one is present.
+ *
+ * @param env the environment to read an override from.
+ * @param home the user home to resolve a default against.
+ * @returns the absolute path of the apps.json a read should open.
+ */
+export function resolveExistingAppsFile(env: NodeJS.ProcessEnv = process.env, home: string = homedir()): string {
+  const file = resolveAppsFile(env, home);
+  if (trimmed(env.HUB_APPS_FILE) || existsSync(file)) return file;
+  const legacy = join(home, ".config", LEGACY_APPS_DIR, "apps.json");
+  return existsSync(legacy) ? legacy : file;
 }
 
 function isValid(desc: Partial<AppDescriptor>): desc is AppDescriptor {
@@ -69,7 +89,7 @@ function isValid(desc: Partial<AppDescriptor>): desc is AppDescriptor {
 }
 
 function readRaw(env: NodeJS.ProcessEnv, home: string): Record<string, Partial<AppDescriptor>> {
-  const file = resolveAppsFile(env, home);
+  const file = resolveExistingAppsFile(env, home);
   if (!existsSync(file)) return {};
   const data = readJson(file, null) as Record<string, Partial<AppDescriptor>> | null;
   return data && typeof data === "object" && !Array.isArray(data) ? data : {};

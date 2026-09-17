@@ -36,7 +36,7 @@ gate should still be catching.
 ## What may reference basekit
 
 Layers 3 and above: the translators, the providers, the app-proxies, the plugins, the loaders,
-`cairn` and `ai-java`. The only repo it may itself reference is `bayonet`.
+`forebay` and `ai-java`. The only repo it may itself reference is `bayonet`.
 
 ## Why the three layer-3 modules may not reference each other
 

@@ -20,13 +20,13 @@ const { REPOS_DIR } = require("../../dist/loader/env.js");
 
 describe("updater: getFolderName", () => {
   it("returns 'owner/name' when plugin-updater cloned it nested under REPOS_DIR", () => {
-    mkdirSync(join(REPOS_DIR, "intisy-ai", "some-plugin"), { recursive: true });
-    const folder = getFolderName({ name: "some-plugin", url: "https://github.com/intisy-ai/some-plugin.git" });
-    assert.equal(folder, "intisy-ai/some-plugin");
+    mkdirSync(join(REPOS_DIR, "forebay", "some-plugin"), { recursive: true });
+    const folder = getFolderName({ name: "some-plugin", url: "https://github.com/forebay/some-plugin.git" });
+    assert.equal(folder, "forebay/some-plugin");
   });
 
   it("falls back to the flat plugin name when no nested clone exists on disk", () => {
-    const folder = getFolderName({ name: "not-cloned", url: "https://github.com/intisy-ai/not-cloned.git" });
+    const folder = getFolderName({ name: "not-cloned", url: "https://github.com/forebay/not-cloned.git" });
     assert.equal(folder, "not-cloned");
   });
 
