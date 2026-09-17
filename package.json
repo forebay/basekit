@@ -1,6 +1,6 @@
 {
   "name": "basekit",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "The shared foundation of the forebay AI-proxy ecosystem: config, logging and app detection, canonical IR, provider accounts, the routing engine, and the app-loader engine, as one package with a subpath per module.",
   "type": "module",
   "license": "MIT",
