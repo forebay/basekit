@@ -7,14 +7,14 @@ plugins {
 dependencies {
     // Exported rather than compileOnly because HandlerCtx's public fields ARE contract types, so
     // every consumer that reads one needs them resolvable. They are interfaces, so nothing is linked.
-    githubApi "intisy:bayonet:1.8.0:contract"
+    githubApi "weivel:java:1.8.0:contract"
 
     // SOURCE-retention, so the jar carries neither the annotations nor the processor.
-    githubCompileOnly "intisy:bayonet:1.8.0:annotations"
+    githubCompileOnly "weivel:java:1.8.0:annotations"
     // The processor jar is a release asset and so carries no transitive metadata: it needs the
     // annotation types it reads named here too, alongside the compile classpath's own copy.
-    githubAnnotationProcessor "intisy:bayonet:1.8.0:processor"
-    githubAnnotationProcessor "intisy:bayonet:1.8.0:annotations"
+    githubAnnotationProcessor "weivel:java:1.8.0:processor"
+    githubAnnotationProcessor "weivel:java:1.8.0:annotations"
 
     testImplementation testFixtures(project(":ir"))
 }

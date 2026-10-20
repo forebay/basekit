@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api project(":ir")
-    githubCompileOnly "intisy:bayonet:1.8.0:contract"
+    githubCompileOnly "weivel:java:1.8.0:contract"
     teavm teavm.libs.jsoApis
 }
 

@@ -2,5 +2,5 @@
 // this ecosystem converts the parsed JSON shape through; no gson, net, nio, reflection or threads, so
 // the module stays TeaVM-transpilable.
 dependencies {
-    githubImplementation "intisy:bayonet:1.8.0:seam"
+    githubImplementation "weivel:java:1.8.0:seam"
 }

@@ -1,12 +1,12 @@
 // The annotations are SOURCE-retention and the api contract supplies only the typed-key interfaces,
 // so both are compileOnly: this module's jar carries neither, and nothing here runs at run time.
 dependencies {
-    githubCompileOnly "intisy:bayonet:1.8.0:annotations"
-    githubCompileOnly "intisy:bayonet:1.8.0:contract"
+    githubCompileOnly "weivel:java:1.8.0:annotations"
+    githubCompileOnly "weivel:java:1.8.0:contract"
     // A release asset carries no transitive metadata, so the processor's own annotation types are
     // named here too, alongside the compile classpath's copy.
-    githubAnnotationProcessor "intisy:bayonet:1.8.0:processor"
-    githubAnnotationProcessor "intisy:bayonet:1.8.0:annotations"
+    githubAnnotationProcessor "weivel:java:1.8.0:processor"
+    githubAnnotationProcessor "weivel:java:1.8.0:annotations"
 }
 
 tasks.named("compileJava") {

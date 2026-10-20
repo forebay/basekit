@@ -4,11 +4,11 @@
 // Every dependency is compileOnly: the annotations are SOURCE-retention, the api contract supplies
 // the seam and typed-key interfaces, and :ir supplies types this module names but never constructs.
 dependencies {
-    githubCompileOnly "intisy:bayonet:1.8.0:annotations"
-    githubCompileOnly "intisy:bayonet:1.8.0:contract"
+    githubCompileOnly "weivel:java:1.8.0:annotations"
+    githubCompileOnly "weivel:java:1.8.0:contract"
     compileOnly project(":ir")
-    githubAnnotationProcessor "intisy:bayonet:1.8.0:processor"
-    githubAnnotationProcessor "intisy:bayonet:1.8.0:annotations"
+    githubAnnotationProcessor "weivel:java:1.8.0:processor"
+    githubAnnotationProcessor "weivel:java:1.8.0:annotations"
 }
 
 tasks.named("compileJava") {

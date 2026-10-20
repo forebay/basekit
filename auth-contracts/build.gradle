@@ -2,11 +2,11 @@
 // and :ir supplies types this module names but never constructs. So all three are compileOnly: this
 // module's jar carries none of them, and no :teavm module embeds a second copy of any.
 dependencies {
-    githubCompileOnly "intisy:bayonet:1.8.0:annotations"
-    githubCompileOnly "intisy:bayonet:1.8.0:contract"
+    githubCompileOnly "weivel:java:1.8.0:annotations"
+    githubCompileOnly "weivel:java:1.8.0:contract"
     compileOnly project(":ir")
-    githubAnnotationProcessor "intisy:bayonet:1.8.0:processor"
-    githubAnnotationProcessor "intisy:bayonet:1.8.0:annotations"
+    githubAnnotationProcessor "weivel:java:1.8.0:processor"
+    githubAnnotationProcessor "weivel:java:1.8.0:annotations"
 }
 
 tasks.named("compileJava") {
