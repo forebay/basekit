@@ -2,6 +2,7 @@ package io.github.intisy.ai.contracts.service;
 
 import io.github.intisy.ai.tsemit.TsInterface;
 import io.github.intisy.ai.tsemit.TsOptional;
+import java.util.List;
 import java.util.Map;
 
 /** One activity as it is read back. */
@@ -77,4 +78,72 @@ public interface ActivityRecord {
      * @return the rendered line.
      */
     String text();
+
+    /**
+     * Monotonic only within the emitting process, so two processes racing into one home can tie.
+     *
+     * @return the sequence number, or null on a record written before the field existed.
+     */
+    @TsOptional
+    Integer seq();
+
+    /**
+     * Who did it.
+     *
+     * @return the actor.
+     */
+    ActivityActor actor();
+
+    /**
+     * Where it was recorded.
+     *
+     * @return the origin.
+     */
+    ActivityOrigin origin();
+
+    /**
+     * What it acted on, when that is not where it was recorded.
+     *
+     * @return the target, or null for the ordinary same-home case.
+     */
+    @TsOptional
+    ActivityTarget target();
+
+    /**
+     * Why it happened.
+     *
+     * @return the cause.
+     */
+    ActivityCause cause();
+
+    /**
+     * The chain it belongs to.
+     *
+     * @return the trace.
+     */
+    ActivityTrace trace();
+
+    /**
+     * Whether the work succeeded, for an activity that reports one.
+     *
+     * @return the outcome, or null for an activity that reports none.
+     */
+    @TsOptional
+    ActivityOutcome outcome();
+
+    /**
+     * How long the work took, in milliseconds.
+     *
+     * @return the duration, or null for an activity that is not timed.
+     */
+    @TsOptional
+    Integer durationMs();
+
+    /**
+     * The values it changed.
+     *
+     * @return the changes, or null when it changed no named values.
+     */
+    @TsOptional
+    List<ActivityValueChange> changes();
 }

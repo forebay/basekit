@@ -1,9 +1,12 @@
-import { execFileSync } from "node:child_process";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { mkdtempSync, readFileSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, it } from "vitest";
+
+const run = promisify(execFile);
 
 const repo = fileURLToPath(new URL("../../..", import.meta.url));
 
@@ -12,15 +15,15 @@ function contractFiles(dir: string): string[] {
   return readdirSync(dir).filter((name) => !name.includes(".teavm.")).sort();
 }
 
-it("keeps the committed declarations identical to what the java emits", () => {
+it("keeps the committed declarations identical to what the java emits", async () => {
   const scratch = mkdtempSync(join(tmpdir(), "core-ir-contracts-"));
-  execFileSync(process.execPath, [
+  await run(process.execPath, [
     join(repo, "node_modules", "@intisy", "bayonet", "scripts", "emit-dts.mjs"),
     "--java-dir", repo,
     "--module", ":ir",
     "--module-dir", "ir",
     "--out", scratch,
-  ], { cwd: repo, stdio: "inherit" });
+  ], { cwd: repo });
 
   const emitted = contractFiles(scratch);
   const committed = contractFiles(join(repo, "src", "ir", "generated"));
@@ -32,9 +35,9 @@ it("keeps the committed declarations identical to what the java emits", () => {
   }
 });
 
-function typeCheck(file: string): { ok: boolean; output: string } {
+async function typeCheck(file: string): Promise<{ ok: boolean; output: string }> {
   try {
-    execFileSync(process.execPath, [
+    await run(process.execPath, [
       join(repo, "node_modules", "typescript", "bin", "tsc"),
       // TypeScript 6 refuses to silently ignore a tsconfig when files are named on the command
       // line, and this check deliberately compiles one fixture under its own flags.
@@ -49,14 +52,14 @@ function typeCheck(file: string): { ok: boolean; output: string } {
   }
 }
 
-it("accepts a handler written against the emitted seam", () => {
-  const result = typeCheck("positive.ts");
+it("accepts a handler written against the emitted seam", async () => {
+  const result = await typeCheck("positive.ts");
   expect(result.output).toBe("");
   expect(result.ok).toBe(true);
 });
 
-it("rejects a handler whose call context is not the declared one", () => {
-  const result = typeCheck("negative-handler.ts");
+it("rejects a handler whose call context is not the declared one", async () => {
+  const result = await typeCheck("negative-handler.ts");
   expect(result.ok).toBe(false);
   expect(result.output).toContain("TS2322");
 });

@@ -62,4 +62,20 @@ public interface ActivityQuery {
      */
     @TsOptional
     String cursor();
+
+    /**
+     * Keep only these subjects, each a kind or a kind and id joined by a colon.
+     *
+     * @return the subjects to keep, or null to keep every subject.
+     */
+    @TsOptional
+    List<String> subjects();
+
+    /**
+     * Keep only activity whose text or details contain this, case-insensitively.
+     *
+     * @return the text to search for, or null to keep everything.
+     */
+    @TsOptional
+    String search();
 }

@@ -7,22 +7,15 @@
 // config CLI (see configcli.ts) with no global install.
 
 import { join } from "path";
+import type { CommandDef } from "./generated/contracts.js";
 import { atomicWrite } from "./files.js";
 import { existingApps } from "./env.js";
 
-/** One slash command as it is deployed into an app. */
-export interface CommandDef {
-  /** Command name, which becomes the deployed file name. */
-  name: string;
-  /** One line shown in the command picker. */
-  description: string;
-  /** Hint describing the arguments, for example `list | get <key> | set <key> <value>`. */
-  argumentHint?: string;
-  /** Markdown the model sees, after any shell output. */
-  body?: string;
-  /** Shell run before the body, which may use `$ARGUMENTS` and the bundle placeholder. */
-  shell?: string;
-}
+// Declared in Java and generated, never mirrored here: a hand copy checks out on the day it is
+// written and diverges afterwards. The barrel re-exports this name from here, so the alias keeps
+// the published surface exactly as it was.
+export type { CommandDef };
+
 
 function render(def: CommandDef, bundlePath: string): string {
   const fm = ["---", `description: ${def.description}`];

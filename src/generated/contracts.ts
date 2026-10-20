@@ -334,6 +334,20 @@ export interface RoutingService {
 }
 
 /**
+ * What an activity acted ON, when that is somewhere other than where it was recorded.
+ *
+ * @remarks
+ * Absent for the ordinary case. A target that only repeats the origin says nothing, so
+ * it is set only for a genuine cross-home or cross-app effect.
+ */
+export interface ActivityTarget {
+  /** The app acted on, when it is not the one recording. */
+  app?: string;
+  /** Absolute path of the home acted on, when it is not the one recording. */
+  home?: string;
+}
+
+/**
  * What occasion an update run is answering to.
  *
  * @remarks
@@ -612,22 +626,40 @@ export type Tone = "normal" | "muted" | "mono" | "old" | "new" | (string & {});
 export interface ActivityRecord {
   /** What was done, within the topic. */
   action: string;
+  /** Who did it. */
+  actor: ActivityActor;
+  /** Why it happened. */
+  cause: ActivityCause;
+  /** The values it changed. */
+  changes?: ActivityValueChange[];
   /** Everything the recorder attached that has no field of its own. */
   details: Record<string, unknown>;
+  /** How long the work took, in milliseconds. */
+  durationMs?: number;
   /** Absolute path of the app home it was recorded in. */
   home: string;
   /** What this record is addressed by, unique within the home. */
   id: string;
   /** How much this activity mattered, which is what a surface sorts and colours by. */
   impact: ActivityImpact;
+  /** Where it was recorded. */
+  origin: ActivityOrigin;
+  /** Whether the work succeeded, for an activity that reports one. */
+  outcome?: ActivityOutcome;
+  /** Monotonic only within the emitting process, so two processes racing into one home can tie. */
+  seq?: number;
   /** Who recorded it, normally a plugin id. */
   source: string;
   /** What the activity was about, when it was about one identifiable thing. */
   subject?: ActivitySubject;
+  /** What it acted on, when that is not where it was recorded. */
+  target?: ActivityTarget;
   /** One line describing the activity, for a surface that renders text. */
   text: string;
   /** What kind of thing happened, which is what a reader filters on. */
   topic: string;
+  /** The chain it belongs to. */
+  trace: ActivityTrace;
   /** When it happened, in epoch milliseconds. */
   ts: number;
 }
@@ -803,6 +835,18 @@ export interface CustomEndpoint {
   label: string;
 }
 
+/** One value that changed, kept with its key visible even when the value itself is redacted. */
+export interface ActivityValueChange {
+  /** The old value. */
+  from?: unknown;
+  /** What changed, kept visible even when the values are not. */
+  key: string;
+  /** Whether the key named a secret, so neither value is carried. */
+  redacted?: boolean;
+  /** The new value. */
+  to?: unknown;
+}
+
 /** Padding hint a surface resolves through its own spacing scale. */
 export type Pad = "none" | "tight" | "normal";
 
@@ -869,16 +913,36 @@ export interface PluginUpdateCache {
   plugins: Record<string, CachedPluginUpdate>;
 }
 
+/** Ties one activity to the chain it belongs to, so a consequence can be read back to its cause. */
+export interface ActivityTrace {
+  /** The activity this one follows from. */
+  causedBy?: string;
+  /** Shared by every activity in one chain. */
+  id: string;
+}
+
 /** What a plugin hands the activity record to have one activity written down. */
 export interface ActivitySpec {
   /** What happened, as one verb. */
   action: string;
+  /** Who did it. The implementation defaults it per topic when this is absent. */
+  actor?: ActivityActor;
+  /** Why it happened. The implementation takes this from the enclosing scope when it is absent. */
+  cause?: ActivityCause;
+  /** The values it changed, redacted on the way in. */
+  changes?: ActivityValueChange[];
   /** Anything else worth keeping, which a surface renders as it likes. */
   details?: Record<string, unknown>;
+  /** How long the work took, in milliseconds. */
+  durationMs?: number;
   /** How much it matters. The implementation picks a default per topic when this is absent. */
   impact?: ActivityImpact;
+  /** Whether the work succeeded, for an activity that reports one. */
+  outcome?: ActivityOutcome;
   /** What the activity was about, when it was about one identifiable thing. */
   subject?: ActivitySubject;
+  /** What it acted on, when that is not where it was recorded. */
+  target?: ActivityTarget;
   /** Dotted topic the activity belongs to, for example `config.changed`. */
   topic: string;
 }
@@ -921,6 +985,9 @@ export interface ActionResult {
   refresh?: boolean;
 }
 
+/** What set an activity in motion, which is what lets a chain of events read back as one story. */
+export type ActivityCauseKind = "user" | "startup" | "shutdown" | "schedule" | "hook" | "watch" | "api" | "cascade" | "unknown";
+
 /** What the last update check found for one plugin. */
 export interface CachedPluginUpdate {
   /**
@@ -948,8 +1015,23 @@ export interface CachedPluginUpdate {
 /** Where a plugin is installed from. */
 export type PluginKind = "git" | "npm";
 
+/** Where an activity was recorded: which app, which home, and which entry point. */
+export interface ActivityOrigin {
+  /** The app that recorded it, or the standalone marker when no app owns the process. */
+  app: string;
+  /** Which entry point of that app, when the process states one. */
+  entry?: string;
+  /** Absolute path of the home it was recorded in. */
+  home: string;
+  /** The recording process, for telling two concurrent runs apart. */
+  pid?: number;
+}
+
 /** Whether a setting or a screen is per-home or shared across every home. */
 export type Scope = "home" | "allHomes";
+
+/** Whether the work an activity reports succeeded. */
+export type ActivityOutcome = "ok" | "failed";
 
 /** Which channel a plugin is on, and whether the other one has anything to offer. */
 export interface PluginChannelState {
@@ -985,10 +1067,14 @@ export interface ActivityQuery {
   impacts?: ActivityImpact[];
   /** How many records one page may hold. */
   limit?: number;
+  /** Keep only activity whose text or details contain this, case-insensitively. */
+  search?: string;
   /** Keep only activity at or after this epoch millisecond. */
   since?: number;
   /** Keep only activity recorded by these sources. */
   sources?: string[];
+  /** Keep only these subjects, each a kind or a kind and id joined by a colon. */
+  subjects?: string[];
   /** Keep only activity on these topics. */
   topics?: string[];
   /** Keep only activity at or before this epoch millisecond. */
@@ -1003,5 +1089,18 @@ export interface HistoryQuery {
   home?: string;
   /** How many snapshots one page may hold. */
   limit?: number;
+}
+
+/** Who caused an activity: a person, the machinery itself, or an app acting on its own. */
+export type ActivityActor = "user" | "system" | "app";
+
+/** Why an activity happened, carried down a scope so every event inside it inherits the same one. */
+export interface ActivityCause {
+  /** Anything more the cause is worth qualifying by. */
+  detail?: string;
+  /** What set the work in motion. */
+  kind: ActivityCauseKind;
+  /** Where it was set in motion, for a cause a person triggered. */
+  surface?: string;
 }
 
