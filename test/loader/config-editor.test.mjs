@@ -59,6 +59,12 @@ function openEditor(row) {
   return S;
 }
 
+// A failed `config set` leaves the row unrepainted and says why only in the status line, so a value
+// assertion alone reports the old value instead of the write's error (see S-31).
+function assertWriteLanded(S, key) {
+  assert.ok(!S.message.startsWith(key + ": "), "the bundle's config set failed, so the row was never repainted: " + S.message);
+}
+
 function closeEditor(S) {
   if (S.msgTimeout) { clearTimeout(S.msgTimeout); S.msgTimeout = null; }
   S.message = "";
@@ -74,6 +80,7 @@ describe("the config editor's saved row", () => {
     try {
       handlePluginKey("enter");
 
+      assertWriteLanded(S, "enabled");
       assert.strictEqual(S.configItems[0].value, true, "the row must not still read false under a message saying it changed");
       assert.strictEqual(S.configItems[0].isSet, true, "an explicitly written key is no longer a default");
     } finally {
@@ -86,8 +93,10 @@ describe("the config editor's saved row", () => {
     const S = openEditor({ key: "enabled", value: false, def: false, isSet: false, type: "boolean" });
     try {
       handlePluginKey("enter");
+      assertWriteLanded(S, "enabled");
       assert.strictEqual(S.configItems[0].value, true, "the first enter must land the written value");
       handlePluginKey("enter");
+      assertWriteLanded(S, "enabled");
       assert.strictEqual(S.configItems[0].value, false, "the second enter must toggle from the written value, not repeat the first write");
     } finally {
       closeEditor(S);
@@ -103,6 +112,7 @@ describe("the config editor's saved row", () => {
     try {
       handleConfigInputData(Buffer.from([13]));   // enter saves
 
+      assertWriteLanded(S, "port");
       assert.strictEqual(S.configItems[0].value, 4000);
       assert.strictEqual(S.configItems[0].isSet, true);
     } finally {
