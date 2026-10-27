@@ -1,11 +1,12 @@
 import { existsSync } from "node:fs";
 import type { EventBusShape, HomeDescriptorShape, HomeRegistryShape } from "@intisy/bayonet/engine";
-import type { Logger, PluginConfig, PluginPaths } from "@intisy/bayonet";
+import type { Logger, PluginConfig, PluginManifest, PluginPaths } from "@intisy/bayonet";
 import { appIdForHome, appPaths, getApp, getApps, resolveHome } from "./apps.js";
 import { publish, subscribeHomes } from "./bus.js";
 import { redactDetails } from "./activity.js";
-import { getConfigDefaults, getConfigValue, loadConfig, setConfigValue } from "./config.js";
+import { getConfigValue, loadConfig, setConfigValue } from "./config.js";
 import { makeWriteLog } from "./log.js";
+import { configNameFor } from "./plugin-declarations.js";
 
 /** The per-plugin half of a plugin context, which is everything a context carries that is not the host's own. */
 export interface PluginRuntimeParts {
@@ -34,26 +35,27 @@ function dotGet<T>(node: unknown, key: string): T | undefined {
  * Resolves one plugin's configuration.
  *
  * @remarks
- * `loadConfig` and `getConfigValue` read only what a plugin actually wrote to disk, because
- * `defineConfig` deliberately writes nothing and keeps declared defaults in a separate in-memory
- * registry. `PluginConfig` promises defaults merged with what is on disk, so this merges both
- * sides itself, on-disk winning, exactly as `defineConfig`'s own return value does.
+ * `loadConfig` and `getConfigValue` read only what a plugin actually wrote to disk, because a
+ * declared default is never written. `PluginConfig` promises defaults merged with what is on disk,
+ * so this merges both sides itself, on-disk winning. The defaults are the manifest's declared ones
+ * rather than `getConfigDefaults`, because the registry is process-global and keyed by name, so a
+ * second home or an unregistered plugin would not find them.
  */
-function configFor(name: string, configDir: string): PluginConfig {
+function configFor(configName: string, defaults: Record<string, unknown>, configDir: string, source: string): PluginConfig {
   return {
-    all: () => ({ ...getConfigDefaults(name), ...loadConfig(name, configDir) }),
+    all: () => ({ ...defaults, ...loadConfig(configName, configDir) }),
     get: <T = unknown>(key: string): T | undefined => {
-      const onDisk = getConfigValue(name, key, configDir) as T | undefined;
-      return onDisk !== undefined ? onDisk : dotGet<T>(getConfigDefaults(name), key);
+      const onDisk = getConfigValue(configName, key, configDir) as T | undefined;
+      return onDisk !== undefined ? onDisk : dotGet<T>(defaults, key);
     },
     set: async (key: string, value: unknown): Promise<void> => {
-      setConfigValue(name, key, value, configDir);
+      setConfigValue(configName, key, value, configDir, source);
     },
   };
 }
 
-function loggerFor(name: string, configDir: string): Logger {
-  const writeLog = makeWriteLog(name, configDir);
+function loggerFor(configName: string, configDir: string, source: string): Logger {
+  const writeLog = makeWriteLog(configName, configDir, source);
   return {
     info: (message) => writeLog(message),
     warn: (message) => writeLog(`WARN ${message}`),
@@ -144,15 +146,17 @@ function eventsFor(name: string, configDir: string): EventBusShape {
  * reach all of it through `ctx` and import none of it. The `paths` come from the home rather than
  * from a plugin's own guesswork, so a renamed storage directory takes effect everywhere at once.
  *
- * @param name - the plugin's config name, which is also how its log lines are attributed
+ * @param manifest - the plugin's manifest, which names its settings file, its declared defaults and
+ *   the id its events and activity records carry
  * @param configDir - the app home to resolve against
  */
-export function createPluginRuntime(name: string, configDir: string): PluginRuntimeParts {
+export function createPluginRuntime(manifest: PluginManifest, configDir: string): PluginRuntimeParts {
+  const configName = configNameFor(manifest);
   return {
-    config: configFor(name, configDir),
-    log: loggerFor(name, configDir),
+    config: configFor(configName, manifest.config?.defaults ?? {}, configDir, manifest.id),
+    log: loggerFor(configName, configDir, manifest.id),
     paths: pathsFor(configDir),
-    events: eventsFor(name, configDir),
+    events: eventsFor(manifest.id, configDir),
     homes: homesFor(),
   };
 }

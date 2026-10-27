@@ -350,6 +350,30 @@ export default {
     }
   });
 
+  it("gives a renamed plugin its own settings file and manifest defaults", async () => {
+    const probe = join(PLUGINS_DIR, "probe-renamed.json");
+    const settings = join(CONFIG_DIR, "config", "renamed.json");
+    mkdirSync(join(CONFIG_DIR, "config"), { recursive: true });
+    writeFileSync(settings, JSON.stringify({ stored: true }));
+    const undeploy = deploy("renamed-plugin", { config: { name: "renamed", defaults: { interval: 30 } } }, `
+import { writeFileSync } from "node:fs";
+export default {
+  activate: (ctx) => writeFileSync(${JSON.stringify(probe)}, JSON.stringify({
+    interval: ctx.config.get("interval"), stored: ctx.config.get("stored"),
+  })),
+  deactivate: () => {},
+};
+`);
+    try {
+      await startPluginHost();
+      expect(JSON.parse(readFileSync(probe, "utf-8"))).toEqual({ interval: 30, stored: true });
+    } finally {
+      undeploy();
+      rmSync(probe, { force: true });
+      rmSync(settings, { force: true });
+    }
+  });
+
   // A slash command and a settings row are things a plugin DECLARES, so they must be registered for
   // one that is broken, disabled, or has simply never been activated.
   it("registers what the installed plugins declare even when nothing drives them", async () => {

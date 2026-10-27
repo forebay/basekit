@@ -86,7 +86,7 @@ export async function startPluginHost(): Promise<void> {
       vocabulary: RENDERED_CAPABILITIES,
       wellKnownServices: WELL_KNOWN_SERVICES,
       services: hostServices(S.capabilities),
-      runtimeFor: (manifest) => createPluginRuntime(manifest.id, CONFIG_DIR),
+      runtimeFor: (manifest) => createPluginRuntime(manifest, CONFIG_DIR),
     });
     for (const error of HOST.quarantined) {
       tuiLog("plugin " + error.pluginId + " quarantined: " + error.detail + " (fix: " + error.fix + ")", true);
