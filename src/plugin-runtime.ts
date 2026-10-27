@@ -41,12 +41,26 @@ function dotGet<T>(node: unknown, key: string): T | undefined {
  * rather than `getConfigDefaults`, because the registry is process-global and keyed by name, so a
  * second home or an unregistered plugin would not find them.
  */
-function configFor(configName: string, defaults: Record<string, unknown>, configDir: string, source: string): PluginConfig {
+function isObject(value: unknown): value is object {
+  return typeof value === "object" && value !== null;
+}
+
+function detached<T>(value: T): T {
+  return isObject(value) ? structuredClone(value) : value;
+}
+
+/**
+ * @remarks
+ * Every read answers a copy, so a caller mutating a nested value changes neither the manifest's
+ * declared defaults nor basekit's cached copy of the settings file.
+ */
+function configFor(configName: string, declaredDefaults: Record<string, unknown>, configDir: string, source: string): PluginConfig {
+  const defaults = structuredClone(declaredDefaults);
   return {
-    all: () => ({ ...defaults, ...loadConfig(configName, configDir) }),
+    all: () => structuredClone({ ...defaults, ...loadConfig(configName, configDir) }),
     get: <T = unknown>(key: string): T | undefined => {
       const onDisk = getConfigValue(configName, key, configDir) as T | undefined;
-      return onDisk !== undefined ? onDisk : dotGet<T>(defaults, key);
+      return detached(onDisk !== undefined ? onDisk : dotGet<T>(defaults, key));
     },
     set: async (key: string, value: unknown): Promise<void> => {
       setConfigValue(configName, key, value, configDir, source);

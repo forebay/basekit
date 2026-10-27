@@ -159,6 +159,21 @@ describe("createPluginRuntime", () => {
     expect(runtime.config.get("interval")).toBe(30);
   });
 
+  it("gives each read its own copy of nested defaults and of stored values", () => {
+    const dir = home();
+    const declared = { interval: 30, selection: { strategy: "sticky" } };
+    const plugin = manifest("nested", { defaults: declared });
+    writeSettings(dir, "config/nested.json", { stored: { depth: 1 } });
+    const runtime = createPluginRuntime(plugin, dir);
+    (runtime.config.get("selection") as { strategy: string }).strategy = "x";
+    (runtime.config.all().selection as { strategy: string }).strategy = "y";
+    expect(plugin.config?.defaults).toEqual({ interval: 30, selection: { strategy: "sticky" } });
+    expect(runtime.config.get("selection.strategy")).toBe("sticky");
+
+    (runtime.config.all().stored as { depth: number }).depth = 2;
+    expect(runtime.config.get("stored.depth")).toBe(1);
+  });
+
   it("keeps two homes apart for one plugin", () => {
     const homeA = home();
     const homeB = home();
