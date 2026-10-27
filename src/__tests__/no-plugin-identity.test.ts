@@ -1,4 +1,5 @@
-import { readdirSync, readFileSync, statSync, writeFileSync, unlinkSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import * as core from "../index.js";
@@ -63,12 +64,13 @@ describe("core holds no plugin identity", () => {
   });
 
   it("catches a plugin id in a non-TypeScript data file, not just .ts", () => {
-    const probePath = join(SOURCE_DIR, "__guard-probe.json");
+    const probeDir = mkdtempSync(join(tmpdir(), "guard-probe-"));
+    const probePath = join(probeDir, "probe.json");
     writeFileSync(probePath, JSON.stringify([{ id: "plugin-updater" }]));
     try {
-      expect(pluginsNamedUnder(SOURCE_DIR)).toContain(`${probePath} names plugin-updater`);
+      expect(pluginsNamedUnder(probeDir)).toEqual([`${probePath} names plugin-updater`]);
     } finally {
-      unlinkSync(probePath);
+      rmSync(probeDir, { recursive: true, force: true });
     }
   });
 });
