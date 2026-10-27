@@ -143,8 +143,10 @@ export function coerce(value: string): unknown {
  * @param key the setting.
  * @param value what to store.
  * @param configDir the home to write to.
+ * @param source who the change is recorded as in the activity record, which is the plugin id when
+ * the file carries a different configuration name.
  */
-export function setConfigValue(name: string, key: string, value: unknown, configDir = getAppConfigDir()): void {
+export function setConfigValue(name: string, key: string, value: unknown, configDir = getAppConfigDir(), source = name): void {
   const previous = getConfigValue(name, key, configDir);
   const root = { ...loadConfig(name, configDir) };
   const parts = key.split(".");
@@ -158,7 +160,7 @@ export function setConfigValue(name: string, key: string, value: unknown, config
   const target = join(configDir, "config", `${name}.json`);
   writeJson(target, root);
   CACHE[configDir + "::" + name] = root;
-  if (CONFIG_CHANGE_HOOK) { try { CONFIG_CHANGE_HOOK(name, key, { key, from: previous, to: value }, configDir); } catch {} }
+  if (CONFIG_CHANGE_HOOK) { try { CONFIG_CHANGE_HOOK(source, key, { key, from: previous, to: value }, configDir); } catch {} }
 }
 
 /**

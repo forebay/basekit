@@ -107,12 +107,14 @@ export function isLoggingEnabled(name: string, configDir = getAppConfigDir()): b
  *
  * @param name the plugin, which names both the file and the console prefix.
  * @param configDir the home to write into.
+ * @param source who an error is recorded as in the activity record, which is the plugin id when the
+ * file and prefix carry a different configuration name.
  * @returns a function that writes one line and never throws.
  */
-export function makeWriteLog(name: string, configDir = getAppConfigDir()) {
+export function makeWriteLog(name: string, configDir = getAppConfigDir(), source = name) {
   return function writeLog(message: string, isError = false): void {
     try {
-      if (isError && ERROR_ACTIVITY_HOOK) { try { ERROR_ACTIVITY_HOOK(name, message); } catch {} }
+      if (isError && ERROR_ACTIVITY_HOOK) { try { ERROR_ACTIVITY_HOOK(source, message); } catch {} }
       // console (stderr): errors always; informational lines only when console
       // logging is globally enabled. Prefixed [name] + colored per-plugin.
       if (isError || consoleEnabled(configDir)) {
